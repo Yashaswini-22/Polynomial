@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+// Convert number in base `base` (as string) to decimal
+long long baseToDecimal(const char* value, int base) {
+    long long result = 0;
+    while (*value) {
+        int digit = 0;
+        if (*value >= '0' && *value <= '9') digit = *value - '0';
+        else if (*value >= 'a' && *value <= 'f') digit = *value - 'a' + 10;
+        result = result * base + digit;
+        value++;
+    }
+    return result;
+}
+
+// Lagrange interpolation to find f(0)
+long long lagrangeInterpolation(int x[], long long y[], int k) {
+    double result = 0;
+    for (int i = 0; i < k; i++) {
+        double term = y[i];
+        for (int j = 0; j < k; j++) {
+            if (j != i) {
+                term *= -x[j] / (double)(x[i] - x[j]);
+            }
+        }
+        result += term;
+    }
+    return llround(result); // round to nearest integer
+}
+
+int main() {
+    // -------- First Test Case --------
+    int k1 = 3;
+    int x1[] = {1, 2, 3};
+    long long y1[] = {
+        baseToDecimal("4", 10),
+        baseToDecimal("111", 2),
+        baseToDecimal("12", 10)
+    };
+    long long secret1 = lagrangeInterpolation(x1, y1, k1);
+    printf("Secret (c) for Test Case 1: %lld\n", secret1);
+
+    // -------- Second Test Case --------
+    int k2 = 7;
+    int x2[] = {1, 2, 3, 4, 5, 6, 7};
+    long long y2[] = {
+        baseToDecimal("13444211440455345511", 6),
+        baseToDecimal("aed7015a346d63", 15),
+        baseToDecimal("6aeeb69631c227c", 15),
+        baseToDecimal("e1b5e05623d881f", 16),
+        baseToDecimal("316034514573652620673", 8),
+        baseToDecimal("2122212201122002221120200210011020220200", 3),
+        baseToDecimal("20120221122211000100210021102001201112121", 3)
+    };
+    long long secret2 = lagrangeInterpolation(x2, y2, k2);
+    printf("Secret (c) for Test Case 2: %lld\n", secret2);
+
+    return 0;
+}
